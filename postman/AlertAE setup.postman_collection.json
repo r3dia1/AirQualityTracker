@@ -1,0 +1,207 @@
+{
+	"info": {
+		"_postman_id": "95065c8d-e1cc-4b6c-ae9b-f65a2b1d3249",
+		"name": "AlertAE setup",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "IN_AlertAE",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-M2M-Origin",
+						"value": "admin:admin",
+						"type": "default"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/xml;ty=2",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<om2m:ae xmlns:om2m=\"http://www.onem2m.org/xml/protocols\" rn=\"AlertAE\">\n    <api>AlertAE</api>\n    <rr>True</rr>\n</om2m:ae>"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8080/~/in-cse",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8080",
+					"path": [
+						"~",
+						"in-cse"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "IN_AlertAE_Container1",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-M2M-Origin",
+						"value": "admin:admin",
+						"type": "default"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/xml;ty=3",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<om2m:cnt xmlns:om2m=\"http://www.onem2m.org/xml/protocols\" rn=\"alert1\">\n    <mni>100</mni>\n</om2m:cnt>"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8080/~/in-cse/in-name/AlertAE",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8080",
+					"path": [
+						"~",
+						"in-cse",
+						"in-name",
+						"AlertAE"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "IN_AlertAE_Container2",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-M2M-Origin",
+						"value": "admin:admin",
+						"type": "default"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/xml;ty=3",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<om2m:cnt xmlns:om2m=\"http://www.onem2m.org/xml/protocols\" rn=\"alert2\">\n    <mni>100</mni>\n</om2m:cnt>"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8080/~/in-cse/in-name/AlertAE",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8080",
+					"path": [
+						"~",
+						"in-cse",
+						"in-name",
+						"AlertAE"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "IN_AlertAE_Container3",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-M2M-Origin",
+						"value": "admin:admin",
+						"type": "default"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/xml;ty=3",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<om2m:cnt xmlns:om2m=\"http://www.onem2m.org/xml/protocols\" rn=\"alert3\">\n    <mni>100</mni>\n</om2m:cnt>"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8080/~/in-cse/in-name/AlertAE",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8080",
+					"path": [
+						"~",
+						"in-cse",
+						"in-name",
+						"AlertAE"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "IN_AlertAE_Container4",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-M2M-Origin",
+						"value": "admin:admin",
+						"type": "default"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/xml;ty=3",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<om2m:cnt xmlns:om2m=\"http://www.onem2m.org/xml/protocols\" rn=\"alert4\">\n    <mni>100</mni>\n</om2m:cnt>"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8080/~/in-cse/in-name/AlertAE",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8080",
+					"path": [
+						"~",
+						"in-cse",
+						"in-name",
+						"AlertAE"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

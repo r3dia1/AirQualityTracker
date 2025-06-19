@@ -1,0 +1,837 @@
+[
+    {
+        "id": "cb806d350d73e677",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "7e223b38e48fb82e",
+        "type": "inject",
+        "z": "cb806d350d73e677",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 260,
+        "y": 220,
+        "wires": [
+            [
+                "220845a01303fd83"
+            ]
+        ]
+    },
+    {
+        "id": "220845a01303fd83",
+        "type": "Container",
+        "z": "cb806d350d73e677",
+        "name": "",
+        "platform": "4311c95a835c688c",
+        "name1": "022f4e274d6d90b9",
+        "viewtype": "autre",
+        "viewunid1": "airQualityData",
+        "x": 480,
+        "y": 220,
+        "wires": [
+            [
+                "e1dc650e59dec9f4"
+            ]
+        ]
+    },
+    {
+        "id": "e1dc650e59dec9f4",
+        "type": "debug",
+        "z": "cb806d350d73e677",
+        "name": "debug 25",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 720,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "6fd738a56f865170",
+        "type": "http in",
+        "z": "cb806d350d73e677",
+        "name": "",
+        "url": "/SensorAE",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 280,
+        "y": 300,
+        "wires": [
+            [
+                "9fda071e2534cafa",
+                "ec1b39b430dc1fe0"
+            ]
+        ]
+    },
+    {
+        "id": "8a1d93816251f238",
+        "type": "function",
+        "z": "cb806d350d73e677",
+        "name": "get status",
+        "func": "var data = msg.payload[\"m2m:sgn\"].nev[0].rep[0][\"m2m:cin\"][0].con[0];\nmsg.payload = data\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 720,
+        "y": 300,
+        "wires": [
+            [
+                "38c973208f509202",
+                "20fab5762d862b7e"
+            ]
+        ]
+    },
+    {
+        "id": "007930ab5577aa5d",
+        "type": "function",
+        "z": "cb806d350d73e677",
+        "name": "set object",
+        "func": "var New = {\n    \"PM2.5\": null,\n    \"PM10\": null,\n    \"SO2\": null,\n    \"NO2\": null,\n    \"O3\": null,\n    \"CO\": null,\n    \"timestamp\": null,\n    \"area\": null}\n\nNew[\"PM2.5\"] = msg.payload.obj.str[0].$.val\nNew[\"PM10\"] = msg.payload.obj.str[1].$.val\nNew[\"SO2\"] = msg.payload.obj.str[2].$.val\nNew[\"NO2\"] = msg.payload.obj.str[3].$.val\nNew[\"O3\"] = msg.payload.obj.str[4].$.val\nNew[\"CO\"] = msg.payload.obj.str[5].$.val\nNew[\"timestamp\"] = msg.payload.obj.str[6].$.val\nNew[\"area\"] = msg.payload.obj.str[7].$.val\n\nmsg.payload = New\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1140,
+        "y": 300,
+        "wires": [
+            [
+                "9837dec2e4290e6b",
+                "2dfe2db38c60772d"
+            ]
+        ]
+    },
+    {
+        "id": "9837dec2e4290e6b",
+        "type": "function",
+        "z": "cb806d350d73e677",
+        "name": "set payload and headers",
+        "func": "/*jshint multistr: true */\nvar d = msg.payload;  // 接收 JSON 資料\nvar area = d[\"area\"];\nvar container = area + \"Cnt\";  // e.g., dongDistrictContainer\n\n// 組裝 XML Payload\nvar data = '<m2m:cin xmlns:m2m=\"http://www.onem2m.org/xml/protocols\">\\\n  <cnf>message</cnf>\\\n  <con>\\\n    &lt;obj&gt;\\\n      &lt;str name=&quot;PM2.5&quot; val=&quot;' + d[\"PM2.5\"] + '&quot;/&gt;\\\n      &lt;str name=&quot;PM10&quot; val=&quot;' + d[\"PM10\"] + '&quot;/&gt;\\\n      &lt;str name=&quot;SO2&quot; val=&quot;' + d[\"SO2\"] + '&quot;/&gt;\\\n      &lt;str name=&quot;NO2&quot; val=&quot;' + d[\"NO2\"] + '&quot;/&gt;\\\n      &lt;str name=&quot;O3&quot; val=&quot;' + d[\"O3\"] + '&quot;/&gt;\\\n      &lt;str name=&quot;CO&quot; val=&quot;' + d[\"CO\"] + '&quot;/&gt;\\\n      &lt;str name=&quot;timestamp&quot; val=&quot;' + d[\"timestamp\"] + '&quot;/&gt;\\\n      &lt;str name=&quot;area&quot; val=&quot;' + d[\"area\"] + '&quot;/&gt;\\\n    &lt;/obj&gt;\\\n  </con>\\\n</m2m:cin>';\n\nmsg.payload = data;\nmsg.headers = {\n\t\"X-M2M-Origin\": \"admin:admin\",\n\t\"Content-Type\": \"application/xml;ty=4\"\n};\n\n// 決定 POST 的 URL\nmsg.method = \"POST\";\nmsg.url = \"http://127.0.0.1:8080/~/in-cse/in-name/SensorAE/\" + container;\n\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1410,
+        "y": 300,
+        "wires": [
+            [
+                "67efd733babba774",
+                "b48cce481d4fd61b"
+            ]
+        ]
+    },
+    {
+        "id": "67efd733babba774",
+        "type": "http request",
+        "z": "cb806d350d73e677",
+        "name": "post to in-cse",
+        "method": "use",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 1670,
+        "y": 300,
+        "wires": [
+            [
+                "40a3728b16c7b619",
+                "9389a34a6d3e5496"
+            ]
+        ]
+    },
+    {
+        "id": "40a3728b16c7b619",
+        "type": "http response",
+        "z": "cb806d350d73e677",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 1950,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "9389a34a6d3e5496",
+        "type": "debug",
+        "z": "cb806d350d73e677",
+        "name": "debug 26",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1960,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "b48cce481d4fd61b",
+        "type": "debug",
+        "z": "cb806d350d73e677",
+        "name": "debug 27",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1660,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "9fda071e2534cafa",
+        "type": "debug",
+        "z": "cb806d350d73e677",
+        "name": "debug 28",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 480,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "38c973208f509202",
+        "type": "debug",
+        "z": "cb806d350d73e677",
+        "name": "debug 29",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 940,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "2dfe2db38c60772d",
+        "type": "debug",
+        "z": "cb806d350d73e677",
+        "name": "debug 30",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1360,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "20fab5762d862b7e",
+        "type": "xml",
+        "z": "cb806d350d73e677",
+        "name": "",
+        "property": "payload",
+        "attr": "",
+        "chr": "",
+        "x": 930,
+        "y": 300,
+        "wires": [
+            [
+                "007930ab5577aa5d"
+            ]
+        ]
+    },
+    {
+        "id": "ec1b39b430dc1fe0",
+        "type": "xml",
+        "z": "cb806d350d73e677",
+        "name": "",
+        "property": "payload",
+        "attr": "",
+        "chr": "",
+        "x": 470,
+        "y": 300,
+        "wires": [
+            [
+                "8a1d93816251f238"
+            ]
+        ]
+    },
+    {
+        "id": "45a62be3e242d77f",
+        "type": "inject",
+        "z": "cb806d350d73e677",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 260,
+        "y": 500,
+        "wires": [
+            [
+                "204699b7ddb3ef83"
+            ]
+        ]
+    },
+    {
+        "id": "204699b7ddb3ef83",
+        "type": "ContentInstance",
+        "z": "cb806d350d73e677",
+        "name": "",
+        "platform": "65cd2c51b23f845b",
+        "name1": "022f4e274d6d90b9",
+        "container": "airQualityData",
+        "width": 0,
+        "options": [
+            {
+                "type": "str",
+                "label": "PM2.5",
+                "value": "10"
+            },
+            {
+                "type": "str",
+                "label": "PM10",
+                "value": "20"
+            },
+            {
+                "type": "str",
+                "label": "SO2",
+                "value": "3"
+            },
+            {
+                "type": "str",
+                "label": "NO2",
+                "value": "10"
+            },
+            {
+                "type": "str",
+                "label": "O3",
+                "value": "20"
+            },
+            {
+                "type": "str",
+                "label": "CO",
+                "value": "1"
+            },
+            {
+                "type": "str",
+                "label": "timestamp",
+                "value": "2025-05-28 04:03:49"
+            },
+            {
+                "type": "str",
+                "label": "area",
+                "value": "dongDistrict"
+            }
+        ],
+        "x": 500,
+        "y": 500,
+        "wires": [
+            [
+                "beed387936e9d00d"
+            ]
+        ]
+    },
+    {
+        "id": "beed387936e9d00d",
+        "type": "debug",
+        "z": "cb806d350d73e677",
+        "name": "debug 40",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 720,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "4a1d1dfbde2504f1",
+        "type": "inject",
+        "z": "cb806d350d73e677",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 260,
+        "y": 560,
+        "wires": [
+            [
+                "0b0d8963a1f61f50"
+            ]
+        ]
+    },
+    {
+        "id": "0b0d8963a1f61f50",
+        "type": "Subscription",
+        "z": "cb806d350d73e677",
+        "name": "",
+        "platform": "65cd2c51b23f845b",
+        "sensor": "022f4e274d6d90b9",
+        "container": "airQualityData",
+        "path": "http://127.0.0.1:8080/~/in-cse/in-name/SensorAE",
+        "x": 490,
+        "y": 560,
+        "wires": [
+            [
+                "70da0245742272f6"
+            ]
+        ]
+    },
+    {
+        "id": "70da0245742272f6",
+        "type": "debug",
+        "z": "cb806d350d73e677",
+        "name": "debug 41",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 720,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "43889acfc0058a16",
+        "type": "http in",
+        "z": "cb806d350d73e677",
+        "name": "",
+        "url": "/AirData",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 270,
+        "y": 680,
+        "wires": [
+            [
+                "e1f791d5743d2c12",
+                "0a71ba455ec9b1d7"
+            ]
+        ]
+    },
+    {
+        "id": "e47142824c5399b6",
+        "type": "http request",
+        "z": "cb806d350d73e677",
+        "name": "get from in-cse",
+        "method": "use",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 680,
+        "y": 680,
+        "wires": [
+            [
+                "14dbb6818855cf5a",
+                "7fbdf2d8cdf5391f"
+            ]
+        ]
+    },
+    {
+        "id": "e1f791d5743d2c12",
+        "type": "debug",
+        "z": "cb806d350d73e677",
+        "name": "debug 42",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 480,
+        "y": 760,
+        "wires": []
+    },
+    {
+        "id": "59774d53f31156e2",
+        "type": "debug",
+        "z": "cb806d350d73e677",
+        "name": "debug 43",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 660,
+        "y": 760,
+        "wires": []
+    },
+    {
+        "id": "14dbb6818855cf5a",
+        "type": "debug",
+        "z": "cb806d350d73e677",
+        "name": "debug 44",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 900,
+        "y": 760,
+        "wires": []
+    },
+    {
+        "id": "0a71ba455ec9b1d7",
+        "type": "function",
+        "z": "cb806d350d73e677",
+        "name": "lbl url",
+        "func": "// 取得地區 label\nvar loc = msg.req.query.area;\n\n// 建立地區與 container 對應關係\nvar area_dict = {\n    \"dongDistrict\": \"alert1\",\n    \"zongxyiDistrict\": \"alert2\",\n    \"nanDistrict\": \"alert3\",\n    \"beiDistrict\": \"alert4\"\n};\n\n// 找出對應的 container 名稱\nvar container = area_dict[loc];\n\n// 如果找不到對應 container，就回傳錯誤\nif (!container) {\n    node.error(\"❌ 無對應地區的 container\", msg);\n    return null;\n}\n\n// 組查詢 OM2M 的 URL\nmsg.url = `http://127.0.0.1:8080/~/in-cse/in-name/AlertAE/${container}/la`;\nmsg.method = \"GET\";\nmsg.headers = {\n    \"X-M2M-Origin\": \"admin:admin\",\n    \"Accept\": \"application/xml\"\n};\n\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 680,
+        "wires": [
+            [
+                "e47142824c5399b6",
+                "59774d53f31156e2"
+            ]
+        ]
+    },
+    {
+        "id": "7fbdf2d8cdf5391f",
+        "type": "xml",
+        "z": "cb806d350d73e677",
+        "name": "",
+        "property": "payload",
+        "attr": "",
+        "chr": "",
+        "x": 890,
+        "y": 680,
+        "wires": [
+            [
+                "1e4663bedbea1dae"
+            ]
+        ]
+    },
+    {
+        "id": "b2ec9529489ed0b2",
+        "type": "http response",
+        "z": "cb806d350d73e677",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 1690,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "1e4663bedbea1dae",
+        "type": "function",
+        "z": "cb806d350d73e677",
+        "name": "function 6",
+        "func": "msg.payload = msg.payload[\"m2m:cin\"].con[0];\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1100,
+        "y": 680,
+        "wires": [
+            [
+                "738ca1f6df06ec42",
+                "d5497ea37352621c"
+            ]
+        ]
+    },
+    {
+        "id": "738ca1f6df06ec42",
+        "type": "xml",
+        "z": "cb806d350d73e677",
+        "name": "",
+        "property": "payload",
+        "attr": "",
+        "chr": "",
+        "x": 1290,
+        "y": 680,
+        "wires": [
+            [
+                "b87da781e7514f77"
+            ]
+        ]
+    },
+    {
+        "id": "b87da781e7514f77",
+        "type": "function",
+        "z": "cb806d350d73e677",
+        "name": "function 7",
+        "func": "msg.payload = \"{AQI:\"+msg.payload.obj.str[0].$.val+\",Level:\"+msg.payload.obj.str[1].$.val+\",Mainpollutant:\"+msg.payload.obj.str[2].$.val+\",timestamp:\"+msg.payload.obj.str[3].$.val+\"}\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1480,
+        "y": 680,
+        "wires": [
+            [
+                "b2ec9529489ed0b2",
+                "dee558a0327aeacb"
+            ]
+        ]
+    },
+    {
+        "id": "dee558a0327aeacb",
+        "type": "debug",
+        "z": "cb806d350d73e677",
+        "name": "debug 47",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1700,
+        "y": 760,
+        "wires": []
+    },
+    {
+        "id": "d5497ea37352621c",
+        "type": "debug",
+        "z": "cb806d350d73e677",
+        "name": "debug 48",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1300,
+        "y": 760,
+        "wires": []
+    },
+    {
+        "id": "413fc539571e7ed4",
+        "type": "http in",
+        "z": "cb806d350d73e677",
+        "name": "",
+        "url": "/monitor",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 270,
+        "y": 940,
+        "wires": [
+            [
+                "9424c8cc564575de",
+                "8b3ad347dc49b179"
+            ]
+        ]
+    },
+    {
+        "id": "27b184d31b0d06a8",
+        "type": "debug",
+        "z": "cb806d350d73e677",
+        "name": "msg.payload",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1070,
+        "y": 960,
+        "wires": []
+    },
+    {
+        "id": "386b51cb8accaf58",
+        "type": "http response",
+        "z": "cb806d350d73e677",
+        "name": "Notification Response",
+        "statusCode": "",
+        "headers": {},
+        "x": 900,
+        "y": 920,
+        "wires": []
+    },
+    {
+        "id": "bde79a570bc4279e",
+        "type": "switch",
+        "z": "cb806d350d73e677",
+        "name": "",
+        "property": "payload[\"m2m:sgn\"].nev[0]",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "null"
+            },
+            {
+                "t": "nnull"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 670,
+        "y": 940,
+        "wires": [
+            [
+                "386b51cb8accaf58"
+            ],
+            [
+                "f78ed1b03f353c4c"
+            ]
+        ]
+    },
+    {
+        "id": "f78ed1b03f353c4c",
+        "type": "function",
+        "z": "cb806d350d73e677",
+        "name": "get state",
+        "func": "var data = msg.payload[\"m2m:sgn\"].nev[0].rep[0][\"m2m:cin\"][0].con[0];\nmsg.payload = data\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 860,
+        "y": 960,
+        "wires": [
+            [
+                "27b184d31b0d06a8"
+            ]
+        ]
+    },
+    {
+        "id": "9424c8cc564575de",
+        "type": "xml",
+        "z": "cb806d350d73e677",
+        "name": "",
+        "property": "payload",
+        "attr": "",
+        "chr": "",
+        "x": 490,
+        "y": 940,
+        "wires": [
+            [
+                "bde79a570bc4279e"
+            ]
+        ]
+    },
+    {
+        "id": "8b3ad347dc49b179",
+        "type": "debug",
+        "z": "cb806d350d73e677",
+        "name": "debug 63",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 500,
+        "y": 1020,
+        "wires": []
+    },
+    {
+        "id": "4311c95a835c688c",
+        "type": "xN_CSE",
+        "platform": "mn-cse",
+        "URLBase": "http://127.0.0.1:8282/~/mn-cse/mn-name",
+        "user": "admin",
+        "password": "admin"
+    },
+    {
+        "id": "022f4e274d6d90b9",
+        "type": "AE",
+        "appId": "SensorAE"
+    },
+    {
+        "id": "65cd2c51b23f845b",
+        "type": "xN_CSE",
+        "platform": "mn-cse",
+        "URLBase": "http://127.0.0.1:8282/~/mn-cse/mn-name",
+        "user": "admin",
+        "password": "admin"
+    }
+]

@@ -1,0 +1,1123 @@
+[
+    {
+        "id": "7663f2d1254dc7b4",
+        "type": "tab",
+        "label": "Flow 2",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "979a19a737f3df98",
+        "type": "inject",
+        "z": "7663f2d1254dc7b4",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 300,
+        "y": 180,
+        "wires": [
+            [
+                "7d55e47992ad8fd7"
+            ]
+        ]
+    },
+    {
+        "id": "7d55e47992ad8fd7",
+        "type": "Container",
+        "z": "7663f2d1254dc7b4",
+        "name": "",
+        "platform": "4311c95a835c688c",
+        "name1": "c97929fd8d51ce9c",
+        "viewtype": "autre",
+        "viewunid1": "alertBox",
+        "x": 520,
+        "y": 180,
+        "wires": [
+            [
+                "1628a053bde3e75b"
+            ]
+        ]
+    },
+    {
+        "id": "1628a053bde3e75b",
+        "type": "debug",
+        "z": "7663f2d1254dc7b4",
+        "name": "debug 33",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 760,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "2e089e038000b023",
+        "type": "http in",
+        "z": "7663f2d1254dc7b4",
+        "name": "",
+        "url": "/AlertAE",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 310,
+        "y": 260,
+        "wires": [
+            [
+                "e4bd1ef00b0e03dd",
+                "50b662e16ceea8ba"
+            ]
+        ]
+    },
+    {
+        "id": "e4bd1ef00b0e03dd",
+        "type": "xml",
+        "z": "7663f2d1254dc7b4",
+        "name": "",
+        "property": "payload",
+        "attr": "",
+        "chr": "",
+        "x": 530,
+        "y": 260,
+        "wires": [
+            [
+                "e8815fd303e13dd3"
+            ]
+        ]
+    },
+    {
+        "id": "e8815fd303e13dd3",
+        "type": "function",
+        "z": "7663f2d1254dc7b4",
+        "name": "get status",
+        "func": "var data = msg.payload[\"m2m:sgn\"].nev[0].rep[0][\"m2m:cin\"][0].con[0];\nmsg.payload = data\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 760,
+        "y": 260,
+        "wires": [
+            [
+                "d52ab9e0a5990a67",
+                "8743859bf9e44636"
+            ]
+        ]
+    },
+    {
+        "id": "fa441f013e628bc8",
+        "type": "function",
+        "z": "7663f2d1254dc7b4",
+        "name": "set object",
+        "func": "var New = {\n    \"PM2.5\": null,\n    \"PM10\": null,\n    \"SO2\": null,\n    \"NO2\": null,\n    \"O3\": null,\n    \"CO\": null,\n    \"timestamp\": null,\n    \"area\": null}\n\nNew[\"PM2.5\"] = msg.payload.obj.str[0].$.val\nNew[\"PM10\"] = msg.payload.obj.str[1].$.val\nNew[\"SO2\"] = msg.payload.obj.str[2].$.val\nNew[\"NO2\"] = msg.payload.obj.str[3].$.val\nNew[\"O3\"] = msg.payload.obj.str[4].$.val\nNew[\"CO\"] = msg.payload.obj.str[5].$.val\nNew[\"timestamp\"] = msg.payload.obj.str[6].$.val\nNew[\"area\"] = msg.payload.obj.str[7].$.val\n\nmsg.payload = New\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1180,
+        "y": 260,
+        "wires": [
+            [
+                "d2d895ada600fd6d",
+                "871ab25e73271537"
+            ]
+        ]
+    },
+    {
+        "id": "d2d895ada600fd6d",
+        "type": "function",
+        "z": "7663f2d1254dc7b4",
+        "name": "set payload and headers",
+        "func": "/*jshint multistr: true */\nvar d = msg.payload;  // 直接接收上游傳來的 JSON 物件\n\nvar data = '<m2m:cin xmlns:m2m=\"http://www.onem2m.org/xml/protocols\">\\\n\t<cnf>message</cnf>\\\n\t<con>\\\n\t  &lt;obj&gt;\\\n\t\t&lt;str name=&quot;PM2.5&quot; val=&quot;' + d[\"PM2.5\"] + '&quot;/&gt;\\\n\t\t&lt;str name=&quot;PM10&quot; val=&quot;' + d[\"PM10\"] + '&quot;/&gt;\\\n\t\t&lt;str name=&quot;SO2&quot; val=&quot;' + d[\"SO2\"] + '&quot;/&gt;\\\n\t\t&lt;str name=&quot;NO2&quot; val=&quot;' + d[\"NO2\"] + '&quot;/&gt;\\\n\t\t&lt;str name=&quot;O3&quot; val=&quot;' + d[\"O3\"] + '&quot;/&gt;\\\n\t\t&lt;str name=&quot;CO&quot; val=&quot;' + d[\"CO\"] + '&quot;/&gt;\\\n\t\t&lt;str name=&quot;timestamp&quot; val=&quot;' + d[\"timestamp\"] + '&quot;/&gt;\\\n\t\t&lt;str name=&quot;area&quot; val=&quot;' + d[\"area\"] + '&quot;/&gt;\\\n\t  &lt;/obj&gt;\\\n\t</con>\\\n</m2m:cin>';\n\nmsg.payload = data;\nmsg.headers = {\n\t\"X-M2M-Origin\": \"admin:admin\",\n\t\"Content-Type\": \"application/xml;ty=4\"\n};\n\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1450,
+        "y": 260,
+        "wires": [
+            [
+                "f05eb4f2f91016ab",
+                "3211b004ea35e5d6"
+            ]
+        ]
+    },
+    {
+        "id": "f05eb4f2f91016ab",
+        "type": "http request",
+        "z": "7663f2d1254dc7b4",
+        "name": "post to in-cse",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://127.0.0.1:8080/~/in-cse/in-name/SensorAE/airQualityData",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 1710,
+        "y": 260,
+        "wires": [
+            [
+                "f38610650f2160a7",
+                "0668534cc0090998"
+            ]
+        ]
+    },
+    {
+        "id": "f38610650f2160a7",
+        "type": "http response",
+        "z": "7663f2d1254dc7b4",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 1990,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "0668534cc0090998",
+        "type": "debug",
+        "z": "7663f2d1254dc7b4",
+        "name": "debug 35",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 2000,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "3211b004ea35e5d6",
+        "type": "debug",
+        "z": "7663f2d1254dc7b4",
+        "name": "debug 36",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1700,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "d52ab9e0a5990a67",
+        "type": "debug",
+        "z": "7663f2d1254dc7b4",
+        "name": "debug 37",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 980,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "871ab25e73271537",
+        "type": "debug",
+        "z": "7663f2d1254dc7b4",
+        "name": "debug 38",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1400,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "8743859bf9e44636",
+        "type": "xml",
+        "z": "7663f2d1254dc7b4",
+        "name": "",
+        "property": "payload",
+        "attr": "",
+        "chr": "",
+        "x": 970,
+        "y": 260,
+        "wires": [
+            [
+                "fa441f013e628bc8"
+            ]
+        ]
+    },
+    {
+        "id": "50b662e16ceea8ba",
+        "type": "debug",
+        "z": "7663f2d1254dc7b4",
+        "name": "debug 39",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 540,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "1524dfff3338f9f2",
+        "type": "http in",
+        "z": "7663f2d1254dc7b4",
+        "name": "",
+        "url": "/AirData_v2",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 320,
+        "y": 560,
+        "wires": [
+            [
+                "3760ba4b42e5d1eb",
+                "5319109ffb5752ea"
+            ]
+        ]
+    },
+    {
+        "id": "04712e1b723a5064",
+        "type": "http request",
+        "z": "7663f2d1254dc7b4",
+        "name": "get from in-cse",
+        "method": "use",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "basic",
+        "senderr": false,
+        "headers": [],
+        "x": 720,
+        "y": 560,
+        "wires": [
+            [
+                "faa7c54d11ec22e9",
+                "0b1ac93eb1777011"
+            ]
+        ]
+    },
+    {
+        "id": "3760ba4b42e5d1eb",
+        "type": "debug",
+        "z": "7663f2d1254dc7b4",
+        "name": "debug 49",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 520,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "22f8ee9087a51aa5",
+        "type": "debug",
+        "z": "7663f2d1254dc7b4",
+        "name": "debug 50",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 700,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "faa7c54d11ec22e9",
+        "type": "debug",
+        "z": "7663f2d1254dc7b4",
+        "name": "debug 51",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 940,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "5319109ffb5752ea",
+        "type": "function",
+        "z": "7663f2d1254dc7b4",
+        "name": "lbl url",
+        "func": "// 取得地區 label\nvar loc = msg.req.query.area;\n\n// 組查詢 OM2M 的 URL\nmsg.url = `http://127.0.0.1:8080/~/in-cse/in-name/AlertAE/alertBox?fu=1&ty=4&lbl=${loc}&drt=1`;\nmsg.method = \"GET\";\nmsg.headers = {\n    \"X-M2M-Origin\": \"admin:admin\",\n    \"Accept\": \"application/xml\"\n};\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 510,
+        "y": 560,
+        "wires": [
+            [
+                "04712e1b723a5064",
+                "22f8ee9087a51aa5"
+            ]
+        ]
+    },
+    {
+        "id": "0b1ac93eb1777011",
+        "type": "xml",
+        "z": "7663f2d1254dc7b4",
+        "name": "",
+        "property": "payload",
+        "attr": "",
+        "chr": "",
+        "x": 930,
+        "y": 560,
+        "wires": [
+            [
+                "f5ea71f8ec2fea66"
+            ]
+        ]
+    },
+    {
+        "id": "512a7873cdc4703e",
+        "type": "http response",
+        "z": "7663f2d1254dc7b4",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 2110,
+        "y": 900,
+        "wires": []
+    },
+    {
+        "id": "878c44896fb584ae",
+        "type": "xml",
+        "z": "7663f2d1254dc7b4",
+        "name": "",
+        "property": "payload",
+        "attr": "",
+        "chr": "",
+        "x": 1610,
+        "y": 900,
+        "wires": [
+            [
+                "d2a3b68e9cb3955d",
+                "b603d541ac38576e"
+            ]
+        ]
+    },
+    {
+        "id": "b603d541ac38576e",
+        "type": "function",
+        "z": "7663f2d1254dc7b4",
+        "name": "function 10",
+        "func": "msg.payload = \"{AQI:\"+msg.payload.obj.str[0].$.val+\",Level:\"+msg.payload.obj.str[1].$.val+\",Mainpollutant:\"+msg.payload.obj.str[2].$.val+\",timestamp:\"+msg.payload.obj.str[3].$.val+\"}\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1890,
+        "y": 900,
+        "wires": [
+            [
+                "512a7873cdc4703e",
+                "34b9ef1019f1efd0"
+            ]
+        ]
+    },
+    {
+        "id": "34b9ef1019f1efd0",
+        "type": "debug",
+        "z": "7663f2d1254dc7b4",
+        "name": "debug 54",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 2120,
+        "y": 980,
+        "wires": []
+    },
+    {
+        "id": "f5ea71f8ec2fea66",
+        "type": "function",
+        "z": "7663f2d1254dc7b4",
+        "name": "split url",
+        "func": "// OM2M 會用空白分隔多個 URI\nconst urilStr = msg.payload[\"m2m:uril\"]._;\nif (!urilStr) {\n    node.error(\"找不到任何 CIN URI\", msg);\n    return null;\n}\n\nmsg.payload = urilStr.trim().split(/\\s+/); // 變成 URI 陣列\nreturn msg;   // 交給 split 節點\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1120,
+        "y": 560,
+        "wires": [
+            [
+                "6d6e4ece8a33a610",
+                "1941ac5a316d29fe"
+            ]
+        ]
+    },
+    {
+        "id": "6d6e4ece8a33a610",
+        "type": "split",
+        "z": "7663f2d1254dc7b4",
+        "name": "",
+        "splt": "\\n",
+        "spltType": "str",
+        "arraySplt": 1,
+        "arraySpltType": "len",
+        "stream": false,
+        "addname": "",
+        "x": 1350,
+        "y": 560,
+        "wires": [
+            [
+                "ebb0a10cfb6f1c6d",
+                "ebd4be24a8fb6a37"
+            ]
+        ]
+    },
+    {
+        "id": "ebb0a10cfb6f1c6d",
+        "type": "function",
+        "z": "7663f2d1254dc7b4",
+        "name": "cin set request",
+        "func": "// 每個 msg.payload 是單一 URI，例如 /in-cse/in-name/...\nmsg.url = `http://127.0.0.1:8080/~${msg.payload}`;   // 直接取最新完整內容\nmsg.method = \"GET\";\nmsg.headers = {\n    \"X-M2M-Origin\": \"admin:admin\",\n    \"Accept\": \"application/xml\"\n};\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1620,
+        "y": 560,
+        "wires": [
+            [
+                "385b25d116f8beb4",
+                "697cef082e61db66"
+            ]
+        ]
+    },
+    {
+        "id": "385b25d116f8beb4",
+        "type": "http request",
+        "z": "7663f2d1254dc7b4",
+        "name": "get from in-cse 2",
+        "method": "use",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "basic",
+        "senderr": false,
+        "headers": [],
+        "x": 1870,
+        "y": 560,
+        "wires": [
+            [
+                "9421ca12ac141408",
+                "321ff259bfcf6117"
+            ]
+        ]
+    },
+    {
+        "id": "9421ca12ac141408",
+        "type": "xml",
+        "z": "7663f2d1254dc7b4",
+        "name": "",
+        "property": "payload",
+        "attr": "",
+        "chr": "",
+        "x": 2110,
+        "y": 560,
+        "wires": [
+            [
+                "972b53313b0f00d4"
+            ]
+        ]
+    },
+    {
+        "id": "972b53313b0f00d4",
+        "type": "join",
+        "z": "7663f2d1254dc7b4",
+        "name": "",
+        "mode": "auto",
+        "build": "object",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "accumulate": true,
+        "timeout": "",
+        "count": "",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 1130,
+        "y": 900,
+        "wires": [
+            [
+                "b8454029d035f9d4",
+                "a5abcdfe9b1bbb77"
+            ]
+        ]
+    },
+    {
+        "id": "b8454029d035f9d4",
+        "type": "function",
+        "z": "7663f2d1254dc7b4",
+        "name": "select la cin",
+        "func": "// 假設 join 後 payload 是 [{m2m:cin:{...}}, {...}, ...]\nconst list = msg.payload;\nif (!Array.isArray(list) || list.length === 0) {\n    node.error(\"沒有任何 CIN 資料\", msg);\n    return null;\n}\n\n// 找 ct 最大者\nfunction ctToDate(ct) {     // ct = \"20250529T163024\"\n    return new Date(\n        `${ct.slice(0, 4)}-${ct.slice(4, 6)}-${ct.slice(6, 8)}T` +\n        `${ct.slice(9, 11)}:${ct.slice(11, 13)}:${ct.slice(13, 15)}+08:00`\n    );\n}\nlet latestCin = list.reduce((a, b) => {\n    return ctToDate(a[\"m2m:cin\"].ct[0]) > ctToDate(b[\"m2m:cin\"].ct[0]) ? a : b;\n});\n\nmsg.payload = latestCin[\"m2m:cin\"].con[0];   // 只回 con 內容\n// 若想整個 CIN 物件，就改成 msg.payload = latestCin[\"m2m:cin\"];\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1390,
+        "y": 900,
+        "wires": [
+            [
+                "878c44896fb584ae",
+                "8337bc5ac8717603"
+            ]
+        ]
+    },
+    {
+        "id": "1941ac5a316d29fe",
+        "type": "debug",
+        "z": "7663f2d1254dc7b4",
+        "name": "debug 56",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1360,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "ebd4be24a8fb6a37",
+        "type": "debug",
+        "z": "7663f2d1254dc7b4",
+        "name": "debug 57",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1600,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "697cef082e61db66",
+        "type": "debug",
+        "z": "7663f2d1254dc7b4",
+        "name": "debug 58",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1860,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "321ff259bfcf6117",
+        "type": "debug",
+        "z": "7663f2d1254dc7b4",
+        "name": "debug 59",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 2120,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "a5abcdfe9b1bbb77",
+        "type": "debug",
+        "z": "7663f2d1254dc7b4",
+        "name": "debug 60",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1400,
+        "y": 980,
+        "wires": []
+    },
+    {
+        "id": "8337bc5ac8717603",
+        "type": "debug",
+        "z": "7663f2d1254dc7b4",
+        "name": "debug 61",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1620,
+        "y": 980,
+        "wires": []
+    },
+    {
+        "id": "d2a3b68e9cb3955d",
+        "type": "debug",
+        "z": "7663f2d1254dc7b4",
+        "name": "debug 62",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1880,
+        "y": 980,
+        "wires": []
+    },
+    {
+        "id": "d64102b0df396cd7",
+        "type": "http in",
+        "z": "7663f2d1254dc7b4",
+        "name": "",
+        "url": "/findBestAQI",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 300,
+        "y": 1180,
+        "wires": [
+            [
+                "4e027b4d4e52e17f",
+                "baecbc0ede3a2173"
+            ]
+        ]
+    },
+    {
+        "id": "4e027b4d4e52e17f",
+        "type": "debug",
+        "z": "7663f2d1254dc7b4",
+        "name": "debug 64",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 500,
+        "y": 1260,
+        "wires": []
+    },
+    {
+        "id": "d9c422bef93dc393",
+        "type": "http response",
+        "z": "7663f2d1254dc7b4",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 1050,
+        "y": 1520,
+        "wires": []
+    },
+    {
+        "id": "b7dba728816da5b8",
+        "type": "xml",
+        "z": "7663f2d1254dc7b4",
+        "name": "",
+        "property": "payload",
+        "attr": "",
+        "chr": "",
+        "x": 1050,
+        "y": 1660,
+        "wires": [
+            [
+                "723596c5348c25c8"
+            ]
+        ]
+    },
+    {
+        "id": "a97920cc65888b4e",
+        "type": "function",
+        "z": "7663f2d1254dc7b4",
+        "name": "function 11",
+        "func": "// resolve con's xml format\nfunction parseMiniMLCon(con) {\n    const obj = {};\n    const conStr = String(con);  // 強制轉為字串\n    \n    // <str name=\"AQI\" val=\"87\"/>\n    // [\"<str name=\\\"AQI\\\" val=\\\"87\\\"/>\", \"AQI\", \"87\"]\n    const matches = [...conStr.matchAll(/<str name=\"(.*?)\" val=\"(.*?)\"\\/>/g)];\n    matches.forEach(match => {\n        obj[match[1]] = match[2];\n    });\n    return obj;\n}\nlet minAQI = Infinity;\nlet bestArea = \"\";\nlet bestData = null;\n\nmsg.payload.forEach(item => {\n    const conXml = item[\"m2m:cin\"]?.con;\n    const lbl = item[\"m2m:cin\"]?.lbl;\n    const area = Array.isArray(lbl) ? lbl[0] : \"unknown\";\n\n    if (!conXml) return;\n\n    const data = parseMiniMLCon(conXml);\n    const aqi = parseFloat(data[\"AQI\"]);\n\n    if (aqi < minAQI) {\n        minAQI = aqi;\n        bestArea = area;\n        bestData = data;\n    }\n});\n\n// 地區對應的座標\nconst coordinates = {\n    dongDistrict: { lat: 22.972146008811823, lng: 120.22257667116419 },\n    zongxyiDistrict: { lat: 22.997687567513708, lng: 120.2026206947761 },\n    nanDistrict: { lat: 22.98723037869994, lng: 120.1973346677905 },\n    beiDistrict: { lat: 23.011116429453473, lng: 120.20034175429839 }\n};\n\nconst loc = coordinates[bestArea] || { lat: 0, lng: 0 };\n\n\nmsg.payload = {\n    bestArea: bestArea,\n    AQI: minAQI,\n    lat: loc.lat,\n    lng: loc.lng\n};\n\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 790,
+        "y": 1520,
+        "wires": [
+            [
+                "d9c422bef93dc393",
+                "df643baf8ac2e498"
+            ]
+        ]
+    },
+    {
+        "id": "df643baf8ac2e498",
+        "type": "debug",
+        "z": "7663f2d1254dc7b4",
+        "name": "debug 67",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1060,
+        "y": 1600,
+        "wires": []
+    },
+    {
+        "id": "baecbc0ede3a2173",
+        "type": "function",
+        "z": "7663f2d1254dc7b4",
+        "name": "split url",
+        "func": "// 對應四個地區 container 名稱\nconst containers = [\n    \"alert1\",\n    \"alert2\",\n    \"alert3\",\n    \"alert4\"\n];\n\n// 組出查詢 URL 陣列（使用 /la 最新資料）\nconst urls = containers.map(name =>\n    `http://127.0.0.1:8080/~/in-cse/in-name/AlertAE/${name}/la`\n);\n\n// 將所有 URL 存入 msg.payload 為陣列，供後續 split 節點處理\nmsg.payload = urls;\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 500,
+        "y": 1180,
+        "wires": [
+            [
+                "de5cc77492f91be9",
+                "2b57ae7071dbd755"
+            ]
+        ]
+    },
+    {
+        "id": "de5cc77492f91be9",
+        "type": "split",
+        "z": "7663f2d1254dc7b4",
+        "name": "",
+        "splt": "\\n",
+        "spltType": "str",
+        "arraySplt": 1,
+        "arraySpltType": "len",
+        "stream": false,
+        "addname": "",
+        "x": 730,
+        "y": 1180,
+        "wires": [
+            [
+                "1291bd1051a2edf8",
+                "5bc55e7359024a11"
+            ]
+        ]
+    },
+    {
+        "id": "1291bd1051a2edf8",
+        "type": "function",
+        "z": "7663f2d1254dc7b4",
+        "name": "cin set request",
+        "func": "// 每個 msg.payload 是單一 URI，例如 /in-cse/in-name/...\nmsg.url = msg.payload;   // 直接取最新完整內容\nmsg.method = \"GET\";\nmsg.headers = {\n    \"X-M2M-Origin\": \"admin:admin\",\n    \"Accept\": \"application/xml\"\n};\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1000,
+        "y": 1180,
+        "wires": [
+            [
+                "50e81e752f1fdf30",
+                "f972d0043ba12f44"
+            ]
+        ]
+    },
+    {
+        "id": "50e81e752f1fdf30",
+        "type": "http request",
+        "z": "7663f2d1254dc7b4",
+        "name": "get from in-cse 2",
+        "method": "use",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "basic",
+        "senderr": false,
+        "headers": [],
+        "x": 1250,
+        "y": 1180,
+        "wires": [
+            [
+                "5c6fabadaf258606",
+                "6b8fac5f28655435"
+            ]
+        ]
+    },
+    {
+        "id": "5c6fabadaf258606",
+        "type": "xml",
+        "z": "7663f2d1254dc7b4",
+        "name": "",
+        "property": "payload",
+        "attr": "",
+        "chr": "",
+        "x": 1490,
+        "y": 1180,
+        "wires": [
+            [
+                "017b01487b553d42"
+            ]
+        ]
+    },
+    {
+        "id": "017b01487b553d42",
+        "type": "join",
+        "z": "7663f2d1254dc7b4",
+        "name": "",
+        "mode": "auto",
+        "build": "object",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "accumulate": true,
+        "timeout": "",
+        "count": "",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 510,
+        "y": 1520,
+        "wires": [
+            [
+                "b951674ccee66ee2",
+                "a97920cc65888b4e"
+            ]
+        ]
+    },
+    {
+        "id": "0f3c8c69a180dacb",
+        "type": "function",
+        "z": "7663f2d1254dc7b4",
+        "name": "select la cin",
+        "func": "// 假設 join 後 payload 是 [{m2m:cin:{...}}, {...}, ...]\nconst list = msg.payload;\nif (!Array.isArray(list) || list.length === 0) {\n    node.error(\"沒有任何 CIN 資料\", msg);\n    return null;\n}\n\n// 找 ct 最大者\nfunction ctToDate(ct) {     // ct = \"20250529T163024\"\n    return new Date(\n        `${ct.slice(0, 4)}-${ct.slice(4, 6)}-${ct.slice(6, 8)}T` +\n        `${ct.slice(9, 11)}:${ct.slice(11, 13)}:${ct.slice(13, 15)}+08:00`\n    );\n}\nlet latestCin = list.reduce((a, b) => {\n    return ctToDate(a[\"m2m:cin\"].ct[0]) > ctToDate(b[\"m2m:cin\"].ct[0]) ? a : b;\n});\n\nmsg.payload = latestCin[\"m2m:cin\"].con[0];   // 只回 con 內容\n// 若想整個 CIN 物件，就改成 msg.payload = latestCin[\"m2m:cin\"];\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 850,
+        "y": 1680,
+        "wires": [
+            [
+                "b7dba728816da5b8",
+                "c21b480587c032c6"
+            ]
+        ]
+    },
+    {
+        "id": "2b57ae7071dbd755",
+        "type": "debug",
+        "z": "7663f2d1254dc7b4",
+        "name": "debug 68",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 740,
+        "y": 1260,
+        "wires": []
+    },
+    {
+        "id": "5bc55e7359024a11",
+        "type": "debug",
+        "z": "7663f2d1254dc7b4",
+        "name": "debug 69",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 980,
+        "y": 1260,
+        "wires": []
+    },
+    {
+        "id": "f972d0043ba12f44",
+        "type": "debug",
+        "z": "7663f2d1254dc7b4",
+        "name": "debug 70",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1240,
+        "y": 1260,
+        "wires": []
+    },
+    {
+        "id": "6b8fac5f28655435",
+        "type": "debug",
+        "z": "7663f2d1254dc7b4",
+        "name": "debug 71",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1500,
+        "y": 1260,
+        "wires": []
+    },
+    {
+        "id": "b951674ccee66ee2",
+        "type": "debug",
+        "z": "7663f2d1254dc7b4",
+        "name": "debug 72",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 780,
+        "y": 1600,
+        "wires": []
+    },
+    {
+        "id": "c21b480587c032c6",
+        "type": "debug",
+        "z": "7663f2d1254dc7b4",
+        "name": "debug 73",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1060,
+        "y": 1720,
+        "wires": []
+    },
+    {
+        "id": "723596c5348c25c8",
+        "type": "debug",
+        "z": "7663f2d1254dc7b4",
+        "name": "debug 74",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1260,
+        "y": 1700,
+        "wires": []
+    },
+    {
+        "id": "4311c95a835c688c",
+        "type": "xN_CSE",
+        "platform": "mn-cse",
+        "URLBase": "http://127.0.0.1:8282/~/mn-cse/mn-name",
+        "user": "admin",
+        "password": "admin"
+    },
+    {
+        "id": "c97929fd8d51ce9c",
+        "type": "AE",
+        "appId": "AlertAE"
+    }
+]

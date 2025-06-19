@@ -1,0 +1,462 @@
+{
+	"info": {
+		"_postman_id": "b19877bf-9e37-40fa-b90f-89b365c0bc2b",
+		"name": "Final mn setup",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "MN_SensorAE_SUB_1",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-M2M-Origin",
+						"value": "admin:admin",
+						"type": "default"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/xml;ty=23",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<m2m:sub xmlns:m2m=\"http://www.onem2m.org/xml/protocols\" rn=\"Sub_IN\">\n    <nu>http://127.0.0.1:8080/~/in-cse/in-name/SensorAE</nu>\n    <nct>2</nct>\n    <et>20301231T235959</et>\n</m2m:sub>"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8282/~/mn-cse/mn-name/SensorAE/dongDistrictCnt",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8282",
+					"path": [
+						"~",
+						"mn-cse",
+						"mn-name",
+						"SensorAE",
+						"dongDistrictCnt"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "MN_SensorAE_DongCnt",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-M2M-Origin",
+						"value": "admin:admin",
+						"type": "default"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/xml;ty=3",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<om2m:cnt xmlns:om2m=\"http://www.onem2m.org/xml/protocols\" rn=\"dongDistrictCnt\">\n    <mni>100</mni>\n    <mbs>5242880</mbs>\n</om2m:cnt>"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8282/~/mn-cse/mn-name/SensorAE",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8282",
+					"path": [
+						"~",
+						"mn-cse",
+						"mn-name",
+						"SensorAE"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "MN_SensorAE_SUB_Delete",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "X-M2M-Origin",
+						"value": "admin:admin",
+						"type": "default"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/xml;ty=23",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<m2m:sub xmlns:m2m=\"http://www.onem2m.org/xml/protocols\" rn=\"Sub_IN\">\n    <nu>http://127.0.0.1:8080/~/in-cse/in-name/SensorAE</nu>\n    <nct>2</nct>\n</m2m:sub>"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8282/~/mn-cse/mn-name/SensorAE/airQualityData",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8282",
+					"path": [
+						"~",
+						"mn-cse",
+						"mn-name",
+						"SensorAE",
+						"airQualityData"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET_SUB_IN",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-M2M-Origin",
+						"value": "admin:admin",
+						"type": "default"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/xml;ty=23",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8282/~/mn-cse/mn-name/SensorAE/airQualityData?ty=23",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8282",
+					"path": [
+						"~",
+						"mn-cse",
+						"mn-name",
+						"SensorAE",
+						"airQualityData"
+					],
+					"query": [
+						{
+							"key": "ty",
+							"value": "23"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "MN_SensorAE",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-M2M-Origin",
+						"value": "admin:admin",
+						"type": "default"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/xml;ty=2",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<om2m:ae xmlns:om2m=\"http://www.onem2m.org/xml/protocols\" rn=\"SensorAE\">\n    <api>SensorAE</api>\n    <poa>http://127.0.0.1:1880/SensorAE</poa>\n    <rr>True</rr>\n</om2m:ae>"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8080/~/in-cse",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8080",
+					"path": [
+						"~",
+						"in-cse"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "MN_SensorAE_NanCnt",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-M2M-Origin",
+						"value": "admin:admin",
+						"type": "default"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/xml;ty=3",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<om2m:cnt xmlns:om2m=\"http://www.onem2m.org/xml/protocols\" rn=\"nanDistrictCnt\">\n    <mni>100</mni>\n    <mbs>5242880</mbs>\n</om2m:cnt>"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8282/~/mn-cse/mn-name/SensorAE",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8282",
+					"path": [
+						"~",
+						"mn-cse",
+						"mn-name",
+						"SensorAE"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "MN_SensorAE_ZongxyiCnt",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-M2M-Origin",
+						"value": "admin:admin",
+						"type": "default"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/xml;ty=3",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<om2m:cnt xmlns:om2m=\"http://www.onem2m.org/xml/protocols\" rn=\"zongxyiDistrictCnt\">\n    <mni>100</mni>\n    <mbs>5242880</mbs>\n</om2m:cnt>"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8282/~/mn-cse/mn-name/SensorAE",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8282",
+					"path": [
+						"~",
+						"mn-cse",
+						"mn-name",
+						"SensorAE"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "MN_SensorAE_BeiCnt",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-M2M-Origin",
+						"value": "admin:admin",
+						"type": "default"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/xml;ty=3",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<om2m:cnt xmlns:om2m=\"http://www.onem2m.org/xml/protocols\" rn=\"beiDistrictCnt\">\n    <mni>100</mni>\n    <mbs>5242880</mbs>\n</om2m:cnt>"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8282/~/mn-cse/mn-name/SensorAE",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8282",
+					"path": [
+						"~",
+						"mn-cse",
+						"mn-name",
+						"SensorAE"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "MN_SensorAE_SUB_2",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-M2M-Origin",
+						"value": "admin:admin",
+						"type": "default"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/xml;ty=23",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<m2m:sub xmlns:m2m=\"http://www.onem2m.org/xml/protocols\" rn=\"Sub_IN\">\n    <nu>http://127.0.0.1:8080/~/in-cse/in-name/SensorAE</nu>\n    <nct>2</nct>\n    <et>20301231T235959</et>\n</m2m:sub>"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8282/~/mn-cse/mn-name/SensorAE/nanDistrictCnt",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8282",
+					"path": [
+						"~",
+						"mn-cse",
+						"mn-name",
+						"SensorAE",
+						"nanDistrictCnt"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "MN_SensorAE_SUB_3",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-M2M-Origin",
+						"value": "admin:admin",
+						"type": "default"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/xml;ty=23",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<m2m:sub xmlns:m2m=\"http://www.onem2m.org/xml/protocols\" rn=\"Sub_IN\">\n    <nu>http://127.0.0.1:8080/~/in-cse/in-name/SensorAE</nu>\n    <nct>2</nct>\n    <et>20301231T235959</et>\n</m2m:sub>"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8282/~/mn-cse/mn-name/SensorAE/zongxyiDistrictCnt",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8282",
+					"path": [
+						"~",
+						"mn-cse",
+						"mn-name",
+						"SensorAE",
+						"zongxyiDistrictCnt"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "MN_SensorAE_SUB_4",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-M2M-Origin",
+						"value": "admin:admin",
+						"type": "default"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/xml;ty=23",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<m2m:sub xmlns:m2m=\"http://www.onem2m.org/xml/protocols\" rn=\"Sub_IN\">\n    <nu>http://127.0.0.1:8080/~/in-cse/in-name/SensorAE</nu>\n    <nct>2</nct>\n    <et>20301231T235959</et>\n</m2m:sub>"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8282/~/mn-cse/mn-name/SensorAE/beiDistrictCnt",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8282",
+					"path": [
+						"~",
+						"mn-cse",
+						"mn-name",
+						"SensorAE",
+						"beiDistrictCnt"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
